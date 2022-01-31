@@ -1,0 +1,66 @@
+.artcard {
+  /* background-color: #fff; */
+  background-color: rgba(51, 50, 50, 0.2);
+  border-radius: 16px;
+  border: 3px solid #757575;
+  box-shadow: 0 2px 40px rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+  padding: 30px 0;
+  max-width: 100%;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  row-gap: 24px;
+}
+
+.artcard__img {
+  border-radius: 16px;
+  max-width: 75%;
+  width: 100%;
+}
+.artcard__img > img {
+  border-radius: 16px;
+  width: 100%;
+}
+.artcard__details {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  width: 100%;
+}
+.artcard__name {
+  text-align: center;
+  margin: 0;
+  font-family: 'Gopgher', serif;
+  font-size: 28px;
+  font-weight: 500;
+  color: black;
+  max-width: 75%;
+}
+.artcard__mint {
+  display: flex;
+  margin-top: 12px;
+  max-width: 75%;
+}
+.artcard__divider {
+  background-color: silver;
+  height: 1px;
+  margin-top: 16px;
+  max-width: 75%;
+  width: 100%;
+}
+
+.artcard__status {
+  margin-top: 16px;
+  text-align: center;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 400;
+  color: #969696;
+  max-width: 75%;
+  width: 100%;
+}

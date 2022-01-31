@@ -46,6 +46,22 @@ header {
       }
     }
   }
+  .header__menu {
+    color: $color-silver;
+    lost-utility: clearfix;
+    display: flex;
+    justify-content: space-evenly;
+    margin: 1em 0;
+    a {
+      text-decoration: none;
+      color: inherit;
+      &:visited,
+      &:hover,
+      &:active {
+        color: inherit;
+      }
+    }
+  }
 }
 
 @media only screen and (max-width: 460px) {

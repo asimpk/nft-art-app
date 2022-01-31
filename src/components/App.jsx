@@ -24,6 +24,10 @@ import CellsInfo from './CellsInfo';
 import UndoRedoContainer from './UndoRedo';
 import initialSetup from '../utils/startup';
 import drawHandlersProvider from '../utils/drawHandlersProvider';
+import ArtName from './ArtName';
+import ArtDescription from './ArtDesciption';
+import CreateNft from './CreatNFT';
+import NftForm from './NftForm';
 
 export default class App extends React.Component {
   constructor() {
@@ -266,6 +270,7 @@ export default class App extends React.Component {
             </div>
           </div>
         </div>
+        <NftForm />
         <div className="css-container">
           <CssDisplayContainer />
         </div>
