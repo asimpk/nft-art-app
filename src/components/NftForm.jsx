@@ -25,7 +25,7 @@ const NftForm = () => {
   });
 
   const generateRadioOptions = state => {
-    let options = [
+    const options = [
       {
         value: 'single',
         description: 'single',
@@ -70,7 +70,7 @@ const NftForm = () => {
       </>
     );
     const radioType = 'preview';
-    let radioOptions = (
+    const radioOptions = (
       <div className={`modal__${radioType}`}>
         <RadioSelector
           name={`${radioType}-type`}

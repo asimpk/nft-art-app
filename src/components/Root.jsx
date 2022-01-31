@@ -8,18 +8,18 @@ const Root = ({ store }) => (
   <BrowserRouter>
     <Provider store={store}>
       <header>
-        <div class="col-2-3">
+        <div className="col-2-3">
           <Link to="/">
             {' '}
             <h1>Pixal Art NFT</h1>
           </Link>
         </div>
-        <div class="col-1-3">
-          <div class="header__menu">
-            <div class="">
+        <div className="col-1-3">
+          <div className="header__menu">
+            <div className="">
               <Link to="/">CREATE</Link>
             </div>
-            <div class="">
+            <div className="">
               <Link to="/market">MARKET</Link>
             </div>
           </div>
