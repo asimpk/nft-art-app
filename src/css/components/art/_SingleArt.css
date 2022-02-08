@@ -1,0 +1,40 @@
+.singleart {
+  display: flex;
+  flex-direction: column;
+}
+.singleart__hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.hero_img {
+  margin: 120px 0;
+  height: 450px;
+  width: 450px;
+}
+.hero_img > img {
+  width: 100%;
+}
+.singleart__detail {
+  display: flex;
+}
+.detail__section__left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.detail__section__right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 450px;
+}
+.detail__bid {
+  display: flex;
+  flex-direction: column;
+}
+.detail__acitivty {
+  display: flex;
+  flex-direction: column;
+}

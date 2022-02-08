@@ -17,7 +17,7 @@
 
 .artcard__img {
   border-radius: 16px;
-  max-width: 75%;
+  max-width: 80%;
   width: 100%;
 }
 .artcard__img > img {
@@ -38,29 +38,35 @@
   font-size: 28px;
   font-weight: 500;
   color: black;
-  max-width: 75%;
+  max-width: 80%;
 }
 .artcard__mint {
   display: flex;
   margin-top: 12px;
-  max-width: 75%;
+  max-width: 80%;
 }
 .artcard__divider {
   background-color: silver;
   height: 1px;
   margin-top: 16px;
-  max-width: 75%;
+  max-width: 80%;
   width: 100%;
 }
 
 .artcard__status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: aliceblue;
   margin-top: 16px;
+  border-radius: 8px;
+  padding: 16px 12px;
   text-align: center;
   font-family: 'Work Sans', sans-serif;
   font-size: 16px;
   line-height: 22px;
   font-weight: 400;
   color: #969696;
-  max-width: 75%;
+  max-width: 80%;
   width: 100%;
 }

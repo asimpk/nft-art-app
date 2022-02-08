@@ -1,7 +1,5 @@
 import GIFEncoder from 'gif-encoder';
 import blobStream from 'blob-stream';
-import { saveAs } from 'file-saver';
-import randomString from './random';
 
 function fillCanvasWithFrame(canvas, frameInfo) {
   const { frame, cols, cellSize, frameHeight, frameIdx } = frameInfo;
@@ -55,12 +53,7 @@ function renderImageToCanvas(type, canvasInfo, currentFrameInfo, frames) {
   }
   return ctx.getImageData(0, 0, canvasWidth, canvasHeight).data;
 }
-
-const saveCanvasToDisk = (blob, fileExtension) => {
-  saveAs(blob, `${randomString()}.${fileExtension}`);
-};
-
-function renderFrames(settings) {
+function renderFrames(settings, handleGif) {
   const {
     type,
     frames,
@@ -81,13 +74,13 @@ function renderFrames(settings) {
   const canvas = document.createElement('canvas');
   const gif = new GIFEncoder(canvasWidth, canvasHeight);
   gif.pipe(blobStream()).on('finish', function() {
-    saveCanvasToDisk(this.toBlob(), 'gif');
+    let gifBlob = this.toBlob('image/gif');
+    handleGif(gifBlob);
   });
 
   gif.setRepeat(0); // loop indefinitely
   gif.setDispose(3); // restore to previous
   gif.writeHeader();
-
   switch (type) {
     case 'single':
     case 'spritesheet':
@@ -106,10 +99,8 @@ function renderFrames(settings) {
         },
         frames
       );
-      canvas.toBlob(function(blob) {
-        saveCanvasToDisk(blob, 'png');
-      });
-      break;
+      const imgBlob = canvas.toDataURL('image/png');
+      return imgBlob;
     default: {
       let previousInterval = 0;
       frames.forEach((frame, idx, framesArray) => {

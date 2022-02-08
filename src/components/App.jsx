@@ -24,10 +24,7 @@ import CellsInfo from './CellsInfo';
 import UndoRedoContainer from './UndoRedo';
 import initialSetup from '../utils/startup';
 import drawHandlersProvider from '../utils/drawHandlersProvider';
-import ArtName from './ArtName';
-import ArtDescription from './ArtDesciption';
-import CreateNft from './CreatNFT';
-import NftForm from './NftForm';
+import NftForm from './art/NftForm';
 
 export default class App extends React.Component {
   constructor() {
@@ -167,37 +164,7 @@ export default class App extends React.Component {
               </div>
               <div className="app__mobile--container max-width-container">
                 <div className="app__mobile--group">
-                  <button
-                    type="button"
-                    className="app__copycss-button"
-                    onClick={() => {
-                      this.changeModalType('copycss');
-                    }}
-                    data-tooltip={
-                      helpOn ? 'Check your CSS generated code' : null
-                    }
-                  >
-                    css
-                  </button>
-                </div>
-                <div className="app__mobile--group">
                   <div className="app__social-container">
-                    <div
-                      data-tooltip={
-                        helpOn
-                          ? 'Download your creation in different formats'
-                          : null
-                      }
-                    >
-                      <button
-                        type="button"
-                        aria-label="Download"
-                        className="app__download-button"
-                        onClick={() => {
-                          this.changeModalType('download');
-                        }}
-                      />
-                    </div>
                     <div className="app__help-container">
                       <div data-tooltip="Toggle help tooltips">
                         <button
