@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ArtCard from '../art/ArtCard';
 import axios from 'axios';
-import Web3Modal from 'web3modal';
 import { ethers } from 'ethers';
 
 import { nftaddress, nftmarketaddress } from '../../config';
@@ -15,7 +14,8 @@ const Market = () => {
   useEffect(() => {
     loadNFTs();
   }, []);
-  async function loadNFTs() {
+
+  const loadNFTs = async () => {
     /* create a generic provider and query for unsold market items */
     const provider = new ethers.providers.JsonRpcProvider();
     const tokenContract = new ethers.Contract(nftaddress, NFT.abi, provider);
@@ -34,56 +34,32 @@ const Market = () => {
       data.map(async i => {
         const tokenUri = await tokenContract.tokenURI(i.tokenId);
         const meta = await axios.get(tokenUri);
-        let price = ethers.utils.formatUnits(i.price.toString(), 'ether');
+        let price = ethers.utils.formatUnits(i.highestBid.toString(), 'ether');
         let item = {
           price,
           tokenId: i.tokenId.toNumber(),
           seller: i.seller,
           owner: i.owner,
+          auctionEndTime: i.auctionEndTime.toString() * 1000,
           image: meta.data.image,
           name: meta.data.name,
           description: meta.data.description
         };
+        // console.log("Item", ethers.utils.parseBytes32String(i.sellerName))
+        console.log('Itemsss', data);
         return item;
       })
     );
     setNfts(items);
     setLoadingState('loaded');
-  }
-
-  const handleBuyNft = async nft => {
-    /* needs the user to sign the transaction, so will use Web3Provider and sign it */
-    const web3Modal = new Web3Modal();
-    const connection = await web3Modal.connect();
-    const provider = new ethers.providers.Web3Provider(connection);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      nftmarketaddress,
-      NFTMarket.abi,
-      signer
-    );
-
-    /* user will be prompted to pay the asking proces to complete the transaction */
-    const price = ethers.utils.parseUnits(nft.price.toString(), 'ether');
-    const transaction = await contract.createMarketSale(
-      nftaddress,
-      nft.tokenId,
-      {
-        value: price
-      }
-    );
-    await transaction.wait();
-    loadNFTs();
   };
-  console.log('nfts', nfts);
+
   return (
     <div className="market">
       <div className="market__header" />
       <div className="market__content">
         {nfts?.map((nft, index) => {
-          return (
-            index !== 0 && <ArtCard nft={nft} handleBuyNft={handleBuyNft} />
-          );
+          return <ArtCard nft={nft} />;
         })}
       </div>
     </div>

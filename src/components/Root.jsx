@@ -38,6 +38,7 @@ const Root = ({ store }) => {
         <Routes>
           <Route path="/" element={<App dispatch={store.dispatch} />} />
           <Route path="/market" element={<Market />} />
+          <Route path="/market/art/:artId" element={<SingleArt />} />
           <Route path="/user-arts" element={<UserArts />} />
           {/* <Route path="/single-art" element={<SingleArt />} /> */}
         </Routes>

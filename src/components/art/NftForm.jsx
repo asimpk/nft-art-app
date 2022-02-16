@@ -19,11 +19,12 @@ import NFTMarket from '../../artifacts/src/contracts/Market.sol/NFTMarket.json';
 
 const NftForm = () => {
   const [previewType, setPreviewType] = useState('single');
-  const [fileUrl, setFileUrl] = useState(null);
   const [formInput, updateFormInput] = useState({
-    price: '0.2',
+    price: '1',
     name: 'asim',
-    description: 'pixal art'
+    description: 'pixal art',
+    biddingTime: '3600',
+    sellerName: 'seller: Asim'
   });
   const globalState = useSelector(state => {
     const frames = state.present.get('frames');
@@ -54,9 +55,25 @@ const NftForm = () => {
     }
   }
   const createMarket = async fileUrl => {
-    const { name, description, price } = formInput;
-    console.log('createMarket', name, description, price, fileUrl);
-    if (!name || !description || !price || !fileUrl) return;
+    const { name, description, price, biddingTime, sellerName } = formInput;
+    console.log(
+      'createMarket',
+      name,
+      description,
+      price,
+      biddingTime,
+      sellerName,
+      fileUrl
+    );
+    if (
+      !name ||
+      !description ||
+      !price ||
+      !fileUrl ||
+      !biddingTime ||
+      !sellerName
+    )
+      return;
     /* first, upload to IPFS */
     const data = JSON.stringify({
       name,
@@ -83,21 +100,29 @@ const NftForm = () => {
     let contract = new ethers.Contract(nftaddress, NFT.abi, signer);
     let transaction = await contract.createToken(url);
     let tx = await transaction.wait();
+    console.log('tx.events', tx);
     let event = tx.events[0];
     let value = event.args[2];
     let tokenId = value.toNumber();
-
     const price = ethers.utils.parseUnits(formInput.price, 'ether');
+    const biddingTime = formInput.biddingTime;
+    const sellerName = ethers.utils.formatBytes32String(formInput.sellerName);
 
     /* then list the item for sale on the marketplace */
     contract = new ethers.Contract(nftmarketaddress, NFTMarket.abi, signer);
     let listingPrice = await contract.getListingPrice();
     listingPrice = listingPrice.toString();
 
-    transaction = await contract.createMarketItem(nftaddress, tokenId, price, {
-      value: listingPrice
-    });
-    await transaction.wait();
+    transaction = await contract.createMarketItem(
+      nftaddress,
+      tokenId,
+      price,
+      biddingTime,
+      sellerName,
+      {
+        value: listingPrice
+      }
+    );
   }
 
   const generateRadioOptions = state => {
