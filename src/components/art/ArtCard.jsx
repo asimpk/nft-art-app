@@ -22,13 +22,19 @@ const ArtCard = ({ nft }) => {
       </div>
       <div className="artcard__details">
         <div className="artcard__name">{nft?.name}</div>
-        <div className="artcard__mint">{nft?.description}</div>
-        <div className="artcard__divider" />
-        <div className="artcard__status">
-          <div className="artcard__status--price">{nft?.price} ETH</div>
+        {/* <div className="artcard__mint">{nft?.description}</div> */}
+        <div className="artcard__mint">
           <Countdown date={new Date(nft?.auctionEndTime)}>
             <Completionist />
           </Countdown>
+        </div>
+        <div className="artcard__divider" />
+        <div className="artcard__status">
+        <div className="artcard__status__text">Current Bid</div>
+          <div className="artcard__status--price">{nft?.price} ETH</div>
+          {/* <Countdown date={new Date(nft?.auctionEndTime)}>
+            <Completionist />
+          </Countdown> */}
           {/* <div className="artcard__status--bid">
             <button
               type="button"

@@ -25,9 +25,11 @@ contract NFTMarket is ReentrancyGuard {
   }
 
   struct Activity {
+    uint256 bidId;
     address bidderAddress;
     bytes32 bidderName;
     uint256 bidValue;
+    bool withDraw;
   }
   struct MarketItem {
     uint256 itemId;
@@ -46,9 +48,12 @@ contract NFTMarket is ReentrancyGuard {
   }
 
   event ActivityCreated(
+    uint256 bidId,
     address bidderAddress,
     bytes32 bidderName,
-    uint256 bidValue
+    uint256 bidValue,
+    bool withDraw
+
   );
 
   event MarketItemCreated(
@@ -112,9 +117,11 @@ contract NFTMarket is ReentrancyGuard {
     pendingReturns[msg.sender][itemId] += highestBid;
 
     Activity memory act = Activity({
+      bidId: bidId,
       bidderAddress: msg.sender,
       bidderName: sellerName,
-      bidValue: highestBid
+      bidValue: highestBid,
+      withDraw: true
     });
     bidActivities[bidId] = act;
     IERC721(nftContract).transferFrom(msg.sender, address(this), tokenId);
@@ -133,7 +140,7 @@ contract NFTMarket is ReentrancyGuard {
       false,
       false
     );
-    emit ActivityCreated(msg.sender, sellerName, highestBid);
+    emit ActivityCreated(bidId, msg.sender, sellerName, highestBid, false);
   }
 
   /// Bid on the auction with the value sent
@@ -179,9 +186,11 @@ contract NFTMarket is ReentrancyGuard {
     idToMarketItem[itemId].bidActivities.push(bidId);
 
     Activity memory activity;
+    activity.bidId = bidId;
     activity.bidderAddress = msg.sender;
     activity.bidderName = bidderName;
     activity.bidValue = msg.value;
+    activity.withDraw = true;
     bidActivities[bidId] = activity;
     emit HighestBidIncreased(msg.sender, msg.value);
   }
@@ -194,17 +203,19 @@ contract NFTMarket is ReentrancyGuard {
     }
     return false;
   }
-  function withdraw(uint256 itemId) external returns (bool) {
+  function withdraw(uint256 itemId, uint256 bidId) external returns (bool) {
     uint256 amount = pendingReturns[msg.sender][itemId];
     if (amount > 0) {
       // It is important to set this to zero because the recipient
       // can call this function again as part of the receiving call
       // before `send` returns.
-      pendingReturns[msg.sender][itemId] = 0;
+        pendingReturns[msg.sender][itemId] = 0;
+        bidActivities[bidId].withDraw = false;
 
       if (!payable(msg.sender).send(amount)) {
         // No need to call throw here, just reset the amount owing
         pendingReturns[msg.sender][itemId] = amount;
+        bidActivities[bidId].withDraw = true;
         return false;
       }
     }

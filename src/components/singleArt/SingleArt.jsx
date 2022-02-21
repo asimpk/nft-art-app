@@ -2,10 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ethers } from 'ethers';
 import Web3Modal from 'web3modal';
+import Countdown from 'react-countdown';
+
 
 import { nftmarketaddress } from '../../config';
 import NFTMarket from '../../artifacts/src/contracts/Market.sol/NFTMarket.json';
 
+
+const Completionist = () => <span>You are good to go!</span>;
 const SingleArt = () => {
   const [bidActivities, setBidActivities] = useState([]);
   const location = useLocation();
@@ -36,7 +40,7 @@ const SingleArt = () => {
     setBidActivities(items);
   };
 
-  const handleBuyNft = async nft => {
+  const handlePlaceNft = async nft => {
     /* needs the user to sign the transaction, so will use Web3Provider and sign it */
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
@@ -59,7 +63,7 @@ const SingleArt = () => {
     getBiddingActivities();
   };
 
-  const checkWithdraw = async nft => {
+  const checkWithdraw = async (nft, bidId) => {
     const provider = new ethers.providers.JsonRpcProvider();
     const signer = provider.getSigner();
     const contract = new ethers.Contract(
@@ -67,9 +71,18 @@ const SingleArt = () => {
       NFTMarket.abi,
       signer
     );
-    const data = await contract.withrawEligible(nft?.tokenId);
+    const data = await contract.withDraw(nft?.tokenId, bidId);
     console.log('provider', data);
   };
+  const getSignerAdress = async () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+    // Prompt user for account connections
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    const accountAdress = await signer.getAddress()
+    console.log("Account:", await signer.getAddress());
+    return accountAdress;
+  }
   return (
     <div className="singleart">
       <div className="singleart__hero">
@@ -97,37 +110,57 @@ const SingleArt = () => {
           </div>
         </div>
         <div className="detail__section__right">
-          <div className="detail__bid">
+          <div className="detail__bid_container">
             <div className="bid_heading">Bid Details</div>
-            <div className="bid_current">Current Bid</div>
-            <div className="bid_time">Auction Time</div>
-            <div className="bid_action">
-              <div className="artcard__status--bid">
-                <button
-                  type="button"
-                  onClick={() => handleBuyNft(nft)}
-                  className="button-add"
-                >
-                  Buy
-                </button>
+            <div className="bid_current">
+              <div className='bid_current_text'>Current Bid</div>
+              <div className='bid_current_value'>
+                {nft?.price} ETH
               </div>
             </div>
+            <div className="bid_heading">Auction Ending</div>
+            <div className="bid_current">
+              <div className='bid_current_text'>Current Bid</div>
+              <div className='bid_current_value'>
+                <Countdown date={new Date(nft?.auctionEndTime)}>
+                  <Completionist />
+                </Countdown>
+              </div>
+
+            </div>
+            <div className="place_bid">
+              <button
+                type="button"
+                onClick={() => handlePlaceNft(nft)}
+                className="button-bid"
+              >
+                Place a Bid
+              </button>
+            </div>
           </div>
-          <div className="detail__acitivty">
-            <div className="acitivty_heading">Acitity</div>
+          <div className="detail__bid_container">
+            <div className="bid_heading">Activity</div>
             <div className="acitivty_list">
               {bidActivities?.map(act => {
-                console.log('bidActivities', act);
+                console.log('bidActivities', act, getSignerAdress());
                 return (
                   <div className="activity_card">
-                    {act?.bidderName}{' '}
-                    <button
+                     <div className='bidder_detail_val'>
+                      {act?.bidderName}{' '}
+                     </div>
+                     <div className='bidder_detail_val'>
+                     {act?.bidValue} ETH
+                     </div>
+                    
+                    {console.log("checkAddress", act?.bidderAddress, getSignerAdress())}
+                    {act?.withDraw && (act?.bidderAddress === getSignerAdress()) && <button
                       type="button"
-                      onClick={() => checkWithdraw(nft)}
+                      onClick={() => checkWithdraw(nft, act.bidId)}
                       className="button-add"
                     >
                       CheckWithDraw
                     </button>
+                    }
                   </div>
                 );
               })}

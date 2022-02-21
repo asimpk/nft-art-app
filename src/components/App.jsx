@@ -25,6 +25,7 @@ import UndoRedoContainer from './UndoRedo';
 import initialSetup from '../utils/startup';
 import drawHandlersProvider from '../utils/drawHandlersProvider';
 import NftForm from './art/NftForm';
+import ContinueCreateNft from './art/ContinueCreateArt';
 
 export default class App extends React.Component {
   constructor() {

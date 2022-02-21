@@ -16,6 +16,7 @@ import { nftaddress, nftmarketaddress } from '../../config';
 
 import NFT from '../../artifacts/src/contracts/NFT.sol/NFT.json';
 import NFTMarket from '../../artifacts/src/contracts/Market.sol/NFTMarket.json';
+import "./NftForm.css"
 
 const NftForm = () => {
   const [previewType, setPreviewType] = useState('single');
