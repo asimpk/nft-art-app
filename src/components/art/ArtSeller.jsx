@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-const ArtName = ({ name, handleChange }) => {
+const ArtName = ({ sellerName, handleChange }) => {
   return (
     <div className="duration">
       <label htmlFor="duration__input">
-        Art Name
+        Seller Name
         <input
           type="text"
-          name="name"
-          value={name}
+          name="sellerName"
+          value={sellerName}
           onChange={event => {
             handleChange(event);
           }}

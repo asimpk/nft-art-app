@@ -32,3 +32,9 @@
 .nftfrom .duration{
     width: 45%;
 }
+
+
+.nftfrom .duration label input {
+  text-align: left !important;
+  padding: 4px;
+}

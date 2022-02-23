@@ -1,6 +1,7 @@
 .artcard {
   /* background-color: #fff; */
-  background-color: rgba(51, 50, 50, 0.2);
+  /* background-color: rgba(51, 50, 50, 0.2); */
+  background-color: #10101075;
   border-radius: 16px;
   border: 3px solid #757575;
   box-shadow: 0 2px 40px rgba(0, 0, 0, 0.12);
@@ -37,13 +38,17 @@
   font-family: 'Gopgher', serif;
   font-size: 28px;
   font-weight: 500;
-  color: black;
+  color: white;
   max-width: 80%;
 }
 .artcard__mint {
   display: flex;
   margin-top: 12px;
   max-width: 80%;
+  color: #999999;
+}
+.auction-ended {
+  color: #999999;
 }
 .artcard__divider {
   background-color: silver;
@@ -57,7 +62,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: aliceblue;
+  background-color: rgba(255, 255, 255, 0.05);
   margin-top: 16px;
   border-radius: 8px;
   padding: 16px 12px;
@@ -69,4 +74,10 @@
   color: #969696;
   max-width: 80%;
   width: 100%;
+}
+.artcard__status--sold {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

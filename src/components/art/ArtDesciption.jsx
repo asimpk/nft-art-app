@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
 
-const ArtDescription = () => {
-  const [description, setDescription] = useState('');
-  const handleChange = event => {
-    setDescription(event.target.value);
-  };
+const ArtDescription = ({ description, handleChange }) => {
   return (
     <div className="duration">
       <label htmlFor="duration__input">
         Art Description
         <input
           type="text"
+          name="description"
           value={description}
           onChange={event => {
             handleChange(event);

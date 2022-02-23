@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Countdown from 'react-countdown';
 
-const Completionist = () => <span>You are good to go!</span>;
+const AuctionCompleted = ({ handleAuctionCompleted }) => {
+  useEffect(() => {
+    handleAuctionCompleted()
+  }, [])
+  return <span className='auction-ended'>Auction Ended!</span>
+};
 
 const ArtCard = ({ nft }) => {
+  const [isAuctionEnded, setIsAuctionEnded] = useState(false)
   const navigate = useNavigate();
   const artId = nft?.tokenId;
   const goToSingleArt = () => {
@@ -25,25 +31,17 @@ const ArtCard = ({ nft }) => {
         {/* <div className="artcard__mint">{nft?.description}</div> */}
         <div className="artcard__mint">
           <Countdown date={new Date(nft?.auctionEndTime)}>
-            <Completionist />
+            <AuctionCompleted handleAuctionCompleted={() => setIsAuctionEnded(true)} />
           </Countdown>
         </div>
         <div className="artcard__divider" />
         <div className="artcard__status">
-        <div className="artcard__status__text">Current Bid</div>
-          <div className="artcard__status--price">{nft?.price} ETH</div>
-          {/* <Countdown date={new Date(nft?.auctionEndTime)}>
-            <Completionist />
-          </Countdown> */}
-          {/* <div className="artcard__status--bid">
-            <button
-              type="button"
-              onClick={() => handleBuyNft(nft)}
-              className="button-add"
-            >
-              Buy
-            </button>
-          </div> */}
+          {
+            !isAuctionEnded ? <>
+              <div className="artcard__status__text">Current Bid</div>
+              <div className="artcard__status--price">{nft?.price} ETH</div>
+            </> : <div className="artcard__status--sold">SOLD</div>
+          }
         </div>
       </div>
     </div>

@@ -35,18 +35,18 @@ const Market = () => {
         const tokenUri = await tokenContract.tokenURI(i.tokenId);
         const meta = await axios.get(tokenUri);
         let price = ethers.utils.formatUnits(i.highestBid.toString(), 'ether');
+        let sellerName =  ethers.utils.parseBytes32String(i.sellerName);
         let item = {
           price,
           tokenId: i.tokenId.toNumber(),
-          seller: i.seller,
+          seller: sellerName,
           owner: i.owner,
           auctionEndTime: i.auctionEndTime.toString() * 1000,
           image: meta.data.image,
           name: meta.data.name,
           description: meta.data.description
         };
-        // console.log("Item", ethers.utils.parseBytes32String(i.sellerName))
-        console.log('Itemsss', data);
+        console.log('Itemsss', item);
         return item;
       })
     );

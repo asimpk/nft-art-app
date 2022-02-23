@@ -8,10 +8,17 @@ import Countdown from 'react-countdown';
 import { nftmarketaddress } from '../../config';
 import NFTMarket from '../../artifacts/src/contracts/Market.sol/NFTMarket.json';
 
+const AuctionCompleted = ({ handleAuctionCompleted }) => {
+  useEffect(() => {
+    handleAuctionCompleted()
+  }, [])
+  return <span>Auction Ended!</span>
+};
 
-const Completionist = () => <span>You are good to go!</span>;
 const SingleArt = () => {
   const [bidActivities, setBidActivities] = useState([]);
+  const [bidValues, setBidValues] = useState({ bidValue: "", bidderName: "" })
+  const [isAuctionEnded, setIsAuctionEnded] = useState(false)
   const location = useLocation();
   const { nft } = location.state;
 
@@ -37,30 +44,36 @@ const SingleArt = () => {
       };
       return item;
     });
+    console.log("getBiddingActivities", items)
     setBidActivities(items);
   };
 
   const handlePlaceNft = async nft => {
     /* needs the user to sign the transaction, so will use Web3Provider and sign it */
-    const web3Modal = new Web3Modal();
-    const connection = await web3Modal.connect();
-    const provider = new ethers.providers.Web3Provider(connection);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      nftmarketaddress,
-      NFTMarket.abi,
-      signer
-    );
-    console.log('Account:', await signer.getAddress());
-    /* user will be prompted to pay the asking proces to complete the transaction */
-    const price = ethers.utils.parseUnits('10', 'ether');
-    const bidderName = ethers.utils.formatBytes32String('New Bidder');
-    const transaction = await contract.bid(nft.tokenId, bidderName, {
-      value: price
-    });
-    let tx = await transaction.wait();
-    console.log('tx.events', tx.events);
-    getBiddingActivities();
+    if (bidValues?.bidValue && bidValues?.bidderName) {
+      const web3Modal = new Web3Modal();
+      const connection = await web3Modal.connect();
+      const provider = new ethers.providers.Web3Provider(connection);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        nftmarketaddress,
+        NFTMarket.abi,
+        signer
+      );
+      /* user will be prompted to pay the asking proces to complete the transaction */
+      const price = ethers.utils.parseUnits(bidValues?.bidValue, 'ether');
+      const bidderName = ethers.utils.formatBytes32String(bidValues?.bidderName);
+
+      console.log("pricebidderName", price, bidderName)
+      const transaction = await contract.bid(nft.tokenId, bidderName, {
+        value: price
+      });
+      let tx = await transaction.wait();
+      console.log('tx.events', tx.events);
+      getBiddingActivities();
+      setBidValues({ bidValue: '', bidderName: '' })
+    }
+    
   };
 
   const checkWithdraw = async (nft, bidId) => {
@@ -83,6 +96,14 @@ const SingleArt = () => {
     console.log("Account:", await signer.getAddress());
     return accountAdress;
   }
+
+
+
+  const handleBidValChange = (e) => {
+    const key = e.target.name
+    setBidValues({ ...bidValues, [key]: e.target.value })
+  }
+  console.log("handleBidValChange", bidValues, nft)
   return (
     <div className="singleart">
       <div className="singleart__hero">
@@ -97,46 +118,55 @@ const SingleArt = () => {
       </div>
       <div className="singleart__detail">
         <div className="detail__section__left">
-          <div className="detail__artowner">OWner</div>
+          <div className="detail__artowner"><span>Seller : </span> {nft?.seller}</div>
           <div className="detail__heading">
-            The Pretty Fantasy World of Mine
+            {nft?.name}
           </div>
           <div className="detail__description">
-            Habitant sollicitudin faucibus cursus lectus pulvinar dolor non
-            ultrices eget. Facilisi lobortis morbi fringilla urna amet sed ipsum
-            vitae malesuada. Augue neque dui venenatis in sit sem a venenatis.
-            Egestas purus sit nullam quis. Ornare magna rutrum tellus tellus
-            porta massa. Lectus viverra amet velit consequat sit.
+            {nft?.description}
           </div>
         </div>
         <div className="detail__section__right">
           <div className="detail__bid_container">
-            <div className="bid_heading">Bid Details</div>
-            <div className="bid_current">
-              <div className='bid_current_text'>Current Bid</div>
-              <div className='bid_current_value'>
-                {nft?.price} ETH
-              </div>
-            </div>
-            <div className="bid_heading">Auction Ending</div>
-            <div className="bid_current">
-              <div className='bid_current_text'>Current Bid</div>
-              <div className='bid_current_value'>
-                <Countdown date={new Date(nft?.auctionEndTime)}>
-                  <Completionist />
-                </Countdown>
-              </div>
+            {
+              !isAuctionEnded ? <>
+                <div className="bid_heading">Bid Details</div>
+                <div className="bid_current">
+                  <div className='bid_current_text'>Current Bid</div>
+                  <div className='bid_current_value'>
+                    {nft?.price} ETH
+                  </div>
+                </div>
+                <div className="bid_current">
+                  <div className='bid_current_text'>Auction Ending</div>
+                  <div className='bid_current_value'>
+                    <Countdown date={new Date(nft?.auctionEndTime)}>
+                      <AuctionCompleted handleAuctionCompleted={() => setIsAuctionEnded(true)} />
+                    </Countdown>
+                  </div>
 
-            </div>
-            <div className="place_bid">
-              <button
-                type="button"
-                onClick={() => handlePlaceNft(nft)}
-                className="button-bid"
-              >
-                Place a Bid
-              </button>
-            </div>
+                </div>
+                <div className='place-bid-container'>
+                  {/* <div className='close-bid-input'><span>x</span></div> */}
+                  <input className="bidInput" type="number" name="bidValue" placeholder="Bid Price" value={bidValues?.bidValue} onChange={handleBidValChange} />
+                  <input className="bidInput" type="text" name="bidderName" placeholder="Bidder Name" value={bidValues?.bidderName} onChange={handleBidValChange} />
+                </div>
+                <div className="place_bid">
+                  <button
+                    type="button"
+                    onClick={() => handlePlaceNft(nft)}
+                    className="button-bid"
+                  >
+                    Place a Bid
+                  </button>
+                </div>
+
+
+
+              </> : <div className="bid_heading">Auction Endded!</div>
+            }
+
+
           </div>
           <div className="detail__bid_container">
             <div className="bid_heading">Activity</div>
@@ -145,13 +175,13 @@ const SingleArt = () => {
                 console.log('bidActivities', act, getSignerAdress());
                 return (
                   <div className="activity_card">
-                     <div className='bidder_detail_val'>
+                    <div className='bidder_detail_val'>
                       {act?.bidderName}{' '}
-                     </div>
-                     <div className='bidder_detail_val'>
-                     {act?.bidValue} ETH
-                     </div>
-                    
+                    </div>
+                    <div className='bidder_detail_val'>
+                      {act?.bidValue} ETH
+                    </div>
+
                     {console.log("checkAddress", act?.bidderAddress, getSignerAdress())}
                     {act?.withDraw && (act?.bidderAddress === getSignerAdress()) && <button
                       type="button"

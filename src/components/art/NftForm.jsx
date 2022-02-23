@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import renderCanvasGIF from '../../utils/canvasGIF';
 import ArtName from '../art/ArtName';
 import ArtDescription from '../art/ArtDesciption';
+import ArtSeller from "../art/ArtSeller";
 import CreateNft from '../art/CreatNft';
 import Preview from '../Preview';
 import RadioSelector from '../RadioSelector';
@@ -20,12 +21,12 @@ import "./NftForm.css"
 
 const NftForm = () => {
   const [previewType, setPreviewType] = useState('single');
-  const [formInput, updateFormInput] = useState({
+  const [formInput, setFormInput] = useState({
     price: '1',
-    name: 'asim',
-    description: 'pixal art',
+    name: 'The Pretty Fantasy World of Mine',
+    description: 'Habitant sollicitudin faucibus cursus lectus pulvinar dolor non ultrices eget. Facilisi lobortis morbi fringilla urna amet sed ipsum vitae malesuada. Augue neque dui venenatis in sit sem a venenatis.Egestas purus sit nullam quis. Ornare magna rutrum tellus tellus porta massa. Lectus viverra amet velit consequat sit.',
     biddingTime: '3600',
-    sellerName: 'seller: Asim'
+    sellerName: 'Meta Boss'
   });
   const globalState = useSelector(state => {
     const frames = state.present.get('frames');
@@ -42,6 +43,11 @@ const NftForm = () => {
     };
   });
 
+
+  const handleInputChange = (e) => {
+    const inputName = e.target.name;
+    setFormInput({ ...formInput, [inputName]: e.target.value })
+  }
   async function addFile(file) {
     // const file = e.target.files[0]
     try {
@@ -124,6 +130,13 @@ const NftForm = () => {
         value: listingPrice
       }
     );
+    setFormInput({
+      price: '1',
+      name: '',
+      description: '',
+      biddingTime: '3600',
+      sellerName: ''
+    });
   }
 
   const generateRadioOptions = state => {
@@ -217,19 +230,19 @@ const NftForm = () => {
   };
   function blobToDataURL(blob, callback) {
     var a = new FileReader();
-    a.onload = function(e) {
+    a.onload = function (e) {
       callback(e.target.result);
     };
     a.readAsDataURL(blob);
   }
   const handleGif = blobData => {
     if (previewType === 'single') {
-      dataURItoBlob(blobData, function(dataurl) {
+      dataURItoBlob(blobData, function (dataurl) {
         addFile(dataurl);
       });
     } else if (previewType === 'animation') {
-      blobToDataURL(blobData, function(dataurl) {
-        const blob = dataURItoBlob(dataurl, function(dataurl) {
+      blobToDataURL(blobData, function (dataurl) {
+        const blob = dataURItoBlob(dataurl, function (dataurl) {
           addFile(dataurl);
         });
       });
@@ -237,11 +250,13 @@ const NftForm = () => {
   };
 
   const handleUploadImg = () => {
-    if (previewType === 'single') {
-      const imgBlob = renderCanvasGIF({ type: previewType, ...globalState });
-      handleGif(imgBlob);
-    } else if (previewType === 'animation') {
-      renderCanvasGIF({ type: previewType, ...globalState }, handleGif);
+    if (formInput?.name && formInput?.description && formInput?.sellerName) {
+      if (previewType === 'single') {
+        const imgBlob = renderCanvasGIF({ type: previewType, ...globalState });
+        handleGif(imgBlob);
+      } else if (previewType === 'animation') {
+        renderCanvasGIF({ type: previewType, ...globalState }, handleGif);
+      }
     }
   };
 
@@ -249,8 +264,9 @@ const NftForm = () => {
     <div className="nftfrom">
       {getModalContent(globalState)}
 
-      <ArtName />
-      <ArtDescription />
+      <ArtName name={formInput?.name} handleChange={handleInputChange} />
+      <ArtDescription description={formInput?.description} handleChange={handleInputChange} />
+      <ArtSeller sellerName={formInput?.sellerName} handleChange={handleInputChange} />
       <CreateNft handleCreateNft={handleUploadImg} />
     </div>
   );
